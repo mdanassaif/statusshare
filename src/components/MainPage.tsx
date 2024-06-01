@@ -11,6 +11,8 @@ const MainPage: React.FC = () => {
   const [inputText, setInputText] = useState<string>('');
   const [fontWeight, setFontWeight] = useState('normal');
   const [fontSize, setFontSize] = useState<number>(16);
+  const [fontFamily, setFontFamily] = useState<string>('Arial'); // New state for font family
+  const [bottomText, setBottomText] = useState<string>(''); // New state for bottom text
   const sampleBoxRef = useRef<HTMLDivElement>(null);
 
   const handleFontWeightChange = (weight: string) => {
@@ -19,6 +21,10 @@ const MainPage: React.FC = () => {
 
   const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFontSize(parseInt(e.target.value, 10));
+  };
+
+  const handleFontFamilyChange = (family: string) => {
+    setFontFamily(family);
   };
 
   const handleFrameSelect = (frame: string) => {
@@ -48,6 +54,10 @@ const MainPage: React.FC = () => {
     setInputText(e.target.value);
   };
 
+  const handleBottomTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBottomText(e.target.value);
+  };
+
   const handleDownloadImage = () => {
     if (sampleBoxRef.current) {
       html2canvas(sampleBoxRef.current, {
@@ -68,7 +78,9 @@ const MainPage: React.FC = () => {
 
   return (
     <div className="flex flex-col md:flex-row justify-center items-center bg-[#641c1c90] p-4">
+       
       <div className="w-full md:w-[300px] h-[500px] bg-blue-200 p-4 rounded-lg mb-4 md:mb-0 md:mr-4 bg-[#3d9a2152]">
+        
         <h2 className="text-lg font-bold mb-2">Borders Selection</h2>
         <div className="frame-options grid grid-cols-2 gap-2">
           <button className={`frame-button ${selectedFrame === 'frame1' ? 'border-blue-500' : ''}`} onClick={() => handleFrameSelect('frame1')} style={{ backgroundColor: '#dfe981' }}>Border 1</button>
@@ -78,23 +90,42 @@ const MainPage: React.FC = () => {
         </div>
         <h2 className="text-lg font-bold mt-4 mb-2">Photo Upload</h2>
         <input type="file" accept="image/*" className="photo-upload " onChange={handlePhotoUpload} />
+
+        <h2 className="text-lg font-bold mt-4 mb-2">Bottom Text</h2>
+    <input
+      type="text"
+      placeholder="Enter text for bottom paragraph"
+      className="text-input border border-black-300 p-2 rounded-lg mb-2 w-full text-black"
+      onChange={handleBottomTextChange}
+    />
+    <h2 className="text-lg font-bold mt-4 mb-2">Font Family</h2>
+    <select onChange={(e) => handleFontFamilyChange(e.target.value)} className="w-full p-2 border border-gray-300 rounded">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Helvetica">Helvetica</option>
+      <option value="Times New Roman">Times New Roman</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Georgia">Georgia</option>
+    </select>
       </div>
 
       <div className="w-full md:w-[300px] h-[400px] bg-white p-4 rounded-lg relative mb-4 md:mb-0">
         <div
           ref={sampleBoxRef}
-          className="sample-box absolute inset-0 border border-gray-300 flex justify-center items-center uppercase"
+          className="sample-box absolute inset-0 border border-gray-300 flex flex-col justify-center items-center uppercase"
           style={{
             background: selectedPhoto ? `url(${selectedPhoto}) center/cover` : 'transparent',
             borderColor: selectedBorderColor,
             color: selectedTextColor,
             fontWeight: fontWeight,
             fontSize: `${fontSize}px`,
+            fontFamily: fontFamily,
             borderWidth: selectedFrame === 'frame1' ? '7px' : selectedFrame === 'frame2' ? '10px' : selectedFrame === 'frame3' ? '5px' : selectedFrame === 'frame4' ? '15px' : '0',
             borderStyle: selectedFrame === 'frame1' ? 'solid' : selectedFrame === 'frame2' ? 'solid' : selectedFrame === 'frame3' ? 'dotted' : selectedFrame === 'frame4' ? 'dashed' : 'none'
           }}
         >
           {inputText}
+          {bottomText && <p style={{ fontSize: '8px' }}>{bottomText}</p>}
         </div>
         <button className="download-button absolute bottom-4 right-4 bg-black text-white px-4 py-2 rounded" onClick={handleDownloadImage}>Download</button>
       </div>
@@ -109,38 +140,44 @@ const MainPage: React.FC = () => {
           <button className="color-button red w-8 h-8 rounded-full bg-red-500" onClick={() => handleTextColorChange('red')}></button>
           <button className="color-button green w-8 h-8 rounded-full bg-green-500" onClick={() => handleTextColorChange('green')}></button>
           <button className="color-button blue w-8 h-8 rounded-full bg-blue-500" onClick={() => handleTextColorChange('blue')}></button>
-          <button className="color-button yellow w-8 h-8 rounded-full bg-yellow-500" onClick={() => handleTextColorChange('yellow')}></button>
-          <button className="color-button purple w-8 h-8 rounded-full bg-purple-500" onClick={() => handleTextColorChange('purple')}></button>
-          <button className="color-button pink w-8 h-8 rounded-full bg-pink-500" onClick={() => handleTextColorChange('pink')}></button>
-        </div>
+<button className="color-button yellow w-8 h-8 rounded-full bg-yellow-500" onClick={() => handleTextColorChange('yellow')}></button>
+<button className="color-button purple w-8 h-8 rounded-full bg-purple-500" onClick={() => handleTextColorChange('purple')}></button>
+<button className="color-button pink w-8 h-8 rounded-full bg-pink-500" onClick={() => handleTextColorChange('pink')}></button>
+</div>
 
-        <h2 className="text-lg font-bold mt-4 mb-2">Text Size</h2>
-        <input
-          type="range"
-          min="10"
-          max="100"
-          value={fontSize}
-          onChange={handleFontSizeChange}
-          className="w-full"
-        />
+<h2 className="text-lg font-bold mt-4 mb-2">Text Size</h2>
+    <input
+      type="range"
+      min="10"
+      max="25"
+      value={fontSize}
+      onChange={handleFontSizeChange}
+      className="w-full"
+    />
 
-        <div className="font-weight-options flex space-x-2 mt-4">
-          <button className="font-weight-button" onClick={() => handleFontWeightChange('normal')}>Normal</button>
-          <button className="font-weight-button" onClick={() => handleFontWeightChange('bold')}>Bold</button>
-        </div>
-
-        <h2 className="text-lg font-bold mt-4 mb-2">Border Color</h2>
-        <div className="border-color-options flex space-x-2">
-          <button className="border-color-button black w-8 h-8 rounded-full bg-black" onClick={() => handleBorderColorChange('black')}></button>
-          <button className="border-color-button gray w-8 h-8 rounded-full bg-gray-500" onClick={() => handleBorderColorChange('gray')}></button>
-          <button className="border-color-button red w-8 h-8 rounded-full bg-red-500" onClick={() => handleBorderColorChange('red')}></button>
-          <button className="border-color-button yellow w-8 h-8 rounded-full bg-yellow-500" onClick={() => handleBorderColorChange('yellow')}></button>
-          <button className="border-color-button purple w-8 h-8 rounded-full bg-purple-500" onClick={() => handleBorderColorChange('purple')}></button>
-          <button className="border-color-button pink w-8 h-8 rounded-full bg-pink-500" onClick={() => handleBorderColorChange('pink')}></button>
-        </div>
-      </div>
+    <div className="font-weight-options flex space-x-2 mt-4">
+      <button className="font-weight-button" onClick={() => handleFontWeightChange('normal')}>Normal</button>
+      <button className="font-weight-button" onClick={() => handleFontWeightChange('bold')}>Bold</button>
     </div>
-  );
+
+    
+
+    <h2 className="text-lg font-bold mt-4 mb-2">Border Color</h2>
+    <div className="border-color-options flex space-x-2">
+      <button className="border-color-button black w-8 h-8 rounded-full bg-black" onClick={() => handleBorderColorChange('black')}></button>
+      <button className="border-color-button gray w-8 h-8 rounded-full bg-gray-500" onClick={() => handleBorderColorChange('gray')}></button>
+      <button className="border-color-button red w-8 h-8 rounded-full bg-red-500" onClick={() => handleBorderColorChange('red')}></button>
+      <button className="border-color-button yellow w-8 h-8 rounded-full bg-yellow-500" onClick={() => handleBorderColorChange('yellow')}></button>
+      <button className="border-color-button purple w-8 h-8 rounded-full bg-purple-500" onClick={() => handleBorderColorChange('purple')}></button>
+      <button className="border-color-button pink w-8 h-8 rounded-full bg-pink-500" onClick={() => handleBorderColorChange('pink')}></button>
+    </div>
+
+    
+  </div>
+  
+</div>
+
+);
 };
 
 export default MainPage;
